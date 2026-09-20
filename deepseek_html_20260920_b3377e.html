@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TOOLBOX - by grego | p1sy</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#08080d;--bg2:#0d0d16;--card:#12121d;--card2:#181826;
+  --border:#232336;--border2:#2e2e45;
+  --text:#eaeaf5;--dim:#6d6d8a;--dim2:#4a4a5e;
+  --purple:#a855f7;--indigo:#6366f1;--pink:#ec4899;
+  --green:#22c55e;--red:#ef4444;--yellow:#eab308;--cyan:#06b6d4;
+}
+html,body{height:100%}
+body{
+  font-family:-apple-system,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;overflow-x:hidden;position:relative;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(168,85,247,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(168,85,247,.05) 1px,transparent 1px);
+  background-size:44px 44px;
+}
+body::after{
+  content:'';position:fixed;top:-350px;left:50%;transform:translateX(-50%);
+  width:900px;height:900px;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(168,85,247,.20) 0%,transparent 65%);
+  filter:blur(90px);
+  animation:glow 6s ease-in-out infinite;
+}
+@keyframes glow{
+  0%,100%{opacity:.7;transform:translateX(-50%) scale(1)}
+  50%{opacity:1;transform:translateX(-50%) scale(1.15)}
+}
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 32px;border-bottom:1px solid var(--border);
+  background:rgba(8,8,13,.8);backdrop-filter:blur(24px);
+  position:sticky;top:0;z-index:100;
+}
+.logo{display:flex;align-items:center;gap:16px}
+.logo-rgb{
+  font-size:34px;font-weight:900;letter-spacing:-1.5px;
+  background:linear-gradient(90deg,#ff0080,#ff8c00,#ffd700,#00ff88,#00d4ff,#a855f7,#ff0080);
+  background-size:300% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:rgb 5s linear infinite;
+}
+@keyframes rgb{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+.logo-meta{display:flex;flex-direction:column;gap:3px;padding-left:16px;border-left:1px solid var(--border)}
+.logo-by{font-size:11px;color:var(--dim);font-weight:700;letter-spacing:1.5px}
+.logo-by span{
+  background:linear-gradient(90deg,var(--purple),var(--pink));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;font-weight:900;
+}
+.header-right{display:flex;align-items:center;gap:14px}
+.status{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Courier New',monospace;font-size:13px;
+  color:var(--dim);padding:8px 14px;
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:pulse 2s infinite}
+.dot.off{background:var(--red);box-shadow:0 0 10px var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.wrap{display:grid;grid-template-columns:230px 1fr;gap:22px;padding:22px 32px;max-width:1500px;margin:0 auto}
+.sidebar{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:20px;height:fit-content;position:sticky;top:100px;
+}
+.sidebar-label{font-size:10px;font-weight:800;letter-spacing:2.5px;color:var(--dim2);margin-bottom:14px}
+#nav{display:flex;flex-direction:column;gap:4px}
+.nav-btn{
+  background:transparent;border:none;color:var(--text);
+  text-align:left;padding:11px 14px;border-radius:10px;
+  cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.nav-btn::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--purple),var(--pink));
+  transform:scaleY(0);transition:transform .2s;
+}
+.nav-btn:hover{background:var(--card2);transform:translateX(2px)}
+.nav-btn.active{background:linear-gradient(135deg,rgba(168,85,247,.22),rgba(99,102,241,.15));color:#fff}
+.nav-btn.active::before{transform:scaleY(1)}
+.nav-count{font-size:10px;opacity:.65;font-family:'Courier New',monospace;background:var(--bg2);padding:2px 7px;border-radius:6px}
+.nav-stats{display:flex;gap:8px;margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.stat-box{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.stat-label{font-size:9px;color:var(--dim2);text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.stat-val{
+  font-family:'Courier New',monospace;font-size:22px;font-weight:900;margin-top:4px;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.content{display:flex;flex-direction:column;gap:20px;min-width:0}
+.search{position:relative}
+.search input{
+  width:100%;background:var(--card);border:1px solid var(--border);
+  color:var(--text);padding:15px 20px 15px 48px;
+  border-radius:12px;font-family:inherit;font-size:14px;outline:none;transition:all .2s;
+}
+.search input:focus{border-color:var(--purple);box-shadow:0 0 0 4px rgba(168,85,247,.12)}
+.search::before{content:'⌕';position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:22px;color:var(--dim2);pointer-events:none;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.tool{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;
+  cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;
+  animation:cardIn .4s ease backwards;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.tool::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(168,85,247,.14));opacity:0;transition:opacity .25s}
+.tool::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--pink),var(--indigo));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.tool:hover{border-color:var(--purple);transform:translateY(-3px);box-shadow:0 12px 40px rgba(168,85,247,.22)}
+.tool:hover::before{opacity:1}
+.tool:hover::after{transform:scaleX(1)}
+.tool-num{font-family:'Courier New',monospace;font-size:11px;color:var(--purple);font-weight:900;letter-spacing:1px}
+.tool-name{font-size:14px;font-weight:700;margin:8px 0 6px;line-height:1.3;position:relative;z-index:1}
+.tool-cat{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;position:relative;z-index:1}
+.modal{position:fixed;inset:0;background:rgba(5,5,10,.88);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;z-index:500;animation:fade .2s}
+.modal.hide{display:none}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal-box{background:var(--card);border:1px solid var(--border2);border-radius:18px;width:92%;max-width:520px;overflow:hidden;animation:pop .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 24px 80px rgba(0,0,0,.6)}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--card2),var(--card))}
+.modal-head h3{font-size:15px;font-weight:900;background:linear-gradient(90deg,var(--purple),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.close{background:transparent;border:none;color:var(--dim);font-size:18px;cursor:pointer;width:30px;height:30px;border-radius:8px;transition:all .15s}
+.close:hover{background:var(--card2);color:var(--red)}
+.modal-body{padding:22px;display:flex;flex-direction:column;gap:14px;max-height:60vh;overflow-y:auto}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase}
+.field input{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:12px 15px;border-radius:10px;font-family:'Courier New',monospace;font-size:13px;outline:none;transition:all .2s}
+.field input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(168,85,247,.15)}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--bg2)}
+.btn{border:none;padding:11px 26px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;box-shadow:0 6px 24px rgba(168,85,247,.35)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(168,85,247,.5)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-ghost{background:transparent;color:var(--dim);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+.result{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:slideUp .35s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.result.hide{display:none}
+.result-head{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.result-title{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px}
+.result-title::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.result-actions{display:flex;gap:6px}
+.icon-btn{background:transparent;border:1px solid var(--border);color:var(--dim);width:34px;height:34px;border-radius:9px;cursor:pointer;font-size:14px;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.icon-btn:hover{color:var(--purple);border-color:var(--purple);background:var(--card2)}
+.result-body{padding:20px 22px;font-family:'Courier New',monospace;font-size:12.5px;line-height:1.8;max-height:520px;overflow-y:auto}
+.result-body::-webkit-scrollbar{width:8px}
+.result-body::-webkit-scrollbar-track{background:var(--bg)}
+.result-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.result-body::-webkit-scrollbar-thumb:hover{background:var(--purple)}
+.k{color:var(--cyan);font-weight:700}
+.v{color:var(--text)}
+.line{padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.ok{color:var(--green)}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.info{color:var(--cyan)}
+.empty{color:var(--dim);padding:20px 0;text-align:center}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--card);border:1px solid var(--border2);border-left:3px solid var(--purple);color:var(--text);padding:14px 22px;border-radius:12px;font-size:13px;font-weight:700;transform:translateX(450px);transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:1000;box-shadow:0 12px 40px rgba(0,0,0,.5);max-width:340px}
+.toast.show{transform:translateX(0)}
+.toast.success{border-left-color:var(--green)}
+.toast.error{border-left-color:var(--red)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+.foot{text-align:center;padding:24px;font-size:11px;color:var(--dim2);letter-spacing:1.5px;font-weight:700;border-top:1px solid var(--border);margin-top:40px}
+.foot span{background:linear-gradient(90deg,var(--purple),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
+@media(max-width:900px){
+  .wrap{grid-template-columns:1fr;padding:14px}
+  .sidebar{position:static}
+  #nav{flex-direction:row;flex-wrap:wrap}
+  .nav-btn{flex:1;min-width:120px;justify-content:center}
+  .nav-count{display:none}
+  .logo-rgb{font-size:24px}
+  .header{padding:14px 18px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-rgb">TOOLBOX</div>
+    <div class="logo-meta">
+      <div class="logo-by">BY <span>grego</span> | <span>p1sy</span></div>
+      <div class="logo-by" style="font-size:10px">v2.0 • WEB</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="status">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">Bağlanıyor...</span>
+    </div>
+    <div class="status">
+      <span id="clock">--:--:--</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="sidebar-label">KATEGORİLER</div>
+    <div id="nav"></div>
+    <div class="nav-stats">
+      <div class="stat-box"><div class="stat-label">Araç</div><div class="stat-val" id="toolCnt">0</div></div>
+      <div class="stat-box"><div class="stat-label">Sorgu</div><div class="stat-val" id="queryCnt">0</div></div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="search">
+      <input id="search" placeholder="Araç ara... (örn: ip, dns, hash, discord)">
+    </div>
+    <div id="grid" class="grid"></div>
+    <div id="result" class="result hide">
+      <div class="result-head">
+        <div class="result-title" id="resultTitle">Sonuç</div>
+        <div class="result-actions">
+          <button class="icon-btn" id="copyBtn" title="Kopyala">📋</button>
+          <button class="icon-btn" id="closeBtn" title="Kapat">✕</button>
+        </div>
+      </div>
+      <div class="result-body" id="resultBody"></div>
+    </div>
+  </main>
+</div>
+
+<div class="foot">TOOLBOX v2 • BY <span>grego</span> | <span>p1sy</span></div>
+
+<div id="modal" class="modal hide">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalTitle">Araç</h3>
+      <button class="close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal()">İPTAL</button>
+      <button class="btn btn-primary" id="runBtn">ÇALIŞTIR</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const TOOLS = [
+  {n:1,name:"IP Sorgula",cat:"OSINT",api:"/api/ip",inputs:[{k:"ip",l:"IP Adresi",p:"8.8.8.8"}]},
+  {n:2,name:"CIDR / IP Aralığı",cat:"OSINT",api:"/api/cidr",inputs:[{k:"cidr",l:"CIDR",p:"192.168.1.0/24"}]},
+  {n:3,name:"MAC Adresi Sorgu",cat:"OSINT",api:"/api/mac",inputs:[{k:"mac",l:"MAC",p:"00:1A:2B"}]},
+  {n:4,name:"Email / Username",cat:"OSINT",api:"/api/email",inputs:[{k:"q",l:"Email veya Username",p:"ornek@mail.com"}]},
+  {n:6,name:"DNS Kayıtları",cat:"NET",api:"/api/dns",inputs:[{k:"domain",l:"Domain",p:"example.com"}]},
+  {n:7,name:"Reverse DNS",cat:"NET",api:"/api/rdns",inputs:[{k:"ip",l:"IP",p:"8.8.8.8"}]},
+  {n:10,name:"Port Tarayıcı",cat:"NET",api:"/api/portscan",inputs:[
+    {k:"host",l:"Host",p:"scanme.nmap.org"},
+    {k:"range",l:"Port Aralığı (boş = yaygın)",p:"20-100"}
+  ]},
+  {n:12,name:"SSL Sertifika",cat:"NET",api:"/api/ssl",inputs:[{k:"host",l:"Host",p:"google.com"}]},
+  {n:13,name:"HTTP Header",cat:"WEB",api:"/api/headers",inputs:[{k:"url",l:"URL",p:"https://example.com"}]},
+  {n:14,name:"robots.txt",cat:"WEB",api:"/api/robots",inputs:[{k:"url",l:"Site",p:"example.com"}]},
+  {n:15,name:"sitemap.xml",cat:"WEB",api:"/api/sitemap",inputs:[{k:"url",l:"Site",p:"example.com"}]},
+  {n:19,name:"Subdomain Enum",cat:"WEB",api:"/api/subdomains",inputs:[{k:"domain",l:"Domain",p:"example.com"}]},
+  {n:27,name:"Hash / Base64 / URL",cat:"CRYPTO",api:"/api/hash",inputs:[{k:"text",l:"Metin",p:"merhaba"}]},
+  {n:29,name:"Şifre Üretici",cat:"CRYPTO",api:"/api/passgen",inputs:[
+    {k:"length",l:"Uzunluk",p:"16"},{k:"count",l:"Adet",p:"5"}
+  ]},
+  {n:30,name:"JWT Decoder",cat:"CRYPTO",api:"/api/jwt",inputs:[{k:"jwt",l:"JWT Token",p:"eyJ..."}]},
+  {n:31,name:"Whois",cat:"RECON",api:"/api/whois",inputs:[{k:"domain",l:"Domain",p:"example.com"}]},
+  {n:66,name:"Discord Kullanıcı",cat:"RECON",api:"/api/discord",inputs:[{k:"username",l:"Username",p:"grego"}]},
+  {n:37,name:"QR Kod Üret",cat:"MISC",api:"/api/qr",inputs:[{k:"data",l:"İçerik",p:"https://example.com"}]},
+  {n:38,name:"Kısa Link Çözücü",cat:"MISC",api:"/api/short",inputs:[{k:"url",l:"Kısa Link",p:"https://bit.ly/xyz"}]},
+  {n:39,name:"UUID Üretici",cat:"MISC",api:"/api/uuid",inputs:[{k:"count",l:"Adet",p:"5"}]},
+  {n:40,name:"Sistem Bilgisi",cat:"MISC",api:"/api/sysinfo",inputs:[]},
+  {n:44,name:"Benim IP'm",cat:"MISC",api:"/api/myip",inputs:[]},
+  {n:50,name:"URL Kısaltıcı",cat:"MISC",api:"/api/urlshort",inputs:[{k:"url",l:"Uzun URL",p:"https://example.com"}]},
+];
+
+const CATS={
+  ALL:{name:"Tümü",icon:"◈"},
+  OSINT:{name:"OSINT",icon:"◉"},
+  NET:{name:"Ağ",icon:"◐"},
+  WEB:{name:"Web",icon:"◑"},
+  CRYPTO:{name:"Kripto",icon:"◆"},
+  RECON:{name:"Recon",icon:"◇"},
+  MISC:{name:"Araçlar",icon:"○"},
+};
+
+let curCat="ALL",queryCnt=0,lastResult=null,activeTool=null;
+
+document.addEventListener("DOMContentLoaded",async()=>{
+  buildNav();
+  renderTools();
+  tickClock();
+  setInterval(tickClock,1000);
+  document.getElementById("toolCnt").textContent=TOOLS.length;
+  document.getElementById("search").addEventListener("input",e=>renderTools(e.target.value));
+  document.getElementById("copyBtn").onclick=copyResult;
+  document.getElementById("closeBtn").onclick=closeResult;
+  document.getElementById("runBtn").onclick=runTool;
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+  await checkServer();
+});
+
+async function checkServer(){
+  const dot=document.getElementById("statusDot");
+  const txt=document.getElementById("statusText");
+  try{
+    const r=await fetch("/api/ping",{method:"POST"});
+    const d=await r.json();
+    if(d.status==="ok"){
+      dot.classList.remove("off");
+      txt.textContent="Çevrimiçi";
+    }else{
+      throw new Error("status yok");
+    }
+  }catch(e){
+    dot.classList.add("off");
+    txt.textContent="Sunucu kapalı";
+  }
+}
+
+function buildNav(){
+  const nav=document.getElementById("nav");
+  nav.innerHTML="";
+  Object.entries(CATS).forEach(([k,c])=>{
+    const cnt=k==="ALL"?TOOLS.length:TOOLS.filter(t=>t.cat===k).length;
+    const b=document.createElement("button");
+    b.className="nav-btn"+(k===curCat?" active":"");
+    b.innerHTML=`<span>${c.icon} ${c.name}</span><span class="nav-count">${cnt}</span>`;
+    b.onclick=()=>{curCat=k;buildNav();renderTools();};
+    nav.appendChild(b);
+  });
+}
+
+function renderTools(filter=""){
+  const grid=document.getElementById("grid");
+  grid.innerHTML="";
+  let list=TOOLS;
+  if(curCat!=="ALL")list=list.filter(t=>t.cat===curCat);
+  if(filter){const f=filter.toLowerCase();list=list.filter(t=>t.name.toLowerCase().includes(f)||t.cat.toLowerCase().includes(f));}
+  if(!list.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">Araç bulunamadı</div>';return;}
+  list.forEach((t,i)=>{
+    const c=document.createElement("div");
+    c.className="tool";
+    c.style.animationDelay=(i*0.03)+"s";
+    c.innerHTML=`<div class="tool-num">[${String(t.n).padStart(2,"0")}]</div>
+      <div class="tool-name">${t.name}</div>
+      <div class="tool-cat">${CATS[t.cat]?.name||t.cat}</div>`;
+    c.onclick=()=>openTool(t);
+    grid.appendChild(c);
+  });
+}
+
+function openTool(t){
+  activeTool=t;
+  document.getElementById("modalTitle").textContent=`[${t.n}] ${t.name}`;
+  const body=document.getElementById("modalBody");
+  body.innerHTML="";
+  if(!t.inputs.length){
+    body.innerHTML='<div style="color:var(--dim);font-size:13px;text-align:center;padding:10px">Bu araç giriş gerektirmez. Çalıştır butonuna bas.</div>';
+  }else{
+    t.inputs.forEach(inp=>{
+      const f=document.createElement("div");
+      f.className="field";
+      f.innerHTML=`<label>${inp.l}</label><input id="in_${inp.k}" placeholder="${inp.p||""}">`;
+      body.appendChild(f);
+    });
+  }
+  document.getElementById("modal").classList.remove("hide");
+}
+
+function closeModal(){
+  document.getElementById("modal").classList.add("hide");
+  activeTool=null;
+}
+
+async function runTool(){
+  if(!activeTool)return;
+  const payload={};
+  activeTool.inputs.forEach(inp=>{
+    const el=document.getElementById(`in_${inp.k}`);
+    payload[inp.k]=el?el.value.trim():"";
+  });
+  const runBtn=document.getElementById("runBtn");
+  runBtn.disabled=true;
+  runBtn.innerHTML='<span class="spin"></span> ÇALIŞIYOR';
+  const tool={...activeTool};
+  closeModal();
+  const url=window.location.origin + tool.api;
+  try{
+    const r=await fetch(url,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+    if(!r.ok){
+      throw new Error(`Sunucu HTTP ${r.status}`);
+    }
+    const data=await r.json();
+    showResult(tool.name,data);
+    queryCnt++;
+    document.getElementById("queryCnt").textContent=queryCnt;
+    if(data.status==="ok")toast("Sorgu başarılı","success");
+    else toast(data.message||"Hata","error");
+  }catch(e){
+    showResult(tool.name,{status:"error",message:`Bağlantı hatası: ${e.message} (URL: ${url})`});
+    toast("Bağlantı hatası","error");
+  }finally{
+    runBtn.disabled=false;
+    runBtn.innerHTML='ÇALIŞTIR';
+  }
+}
+
+function showResult(title,data){
+  lastResult=JSON.stringify(data,null,2);
+  document.getElementById("resultTitle").textContent=title;
+  const body=document.getElementById("resultBody");
+  body.innerHTML="";
+  if(data.status==="error"){
+    body.innerHTML=`<div class="bad">X ${esc(data.message)}</div>`;
+  }else{
+    renderJSON(data.data,body,0);
+  }
+  const p=document.getElementById("result");
+  p.classList.remove("hide");
+  p.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderJSON(obj,parent,depth){
+  if(depth>5){parent.innerHTML+=`<div style="padding-left:${depth*14}px;color:var(--dim)">...</div>`;return;}
+  if(Array.isArray(obj)){
+    if(!obj.length){parent.innerHTML+=`<div class="empty">(boş liste)</div>`;return;}
+    obj.forEach((it,i)=>{
+      if(typeof it==="object"&&it!==null){
+        parent.innerHTML+=`<div style="padding-left:${depth*14}px;margin-top:6px" class="info">[${i}]</div>`;
+        renderJSON(it,parent,depth+1);
+      }else{
+        parent.innerHTML+=`<div style="padding-left:${depth*14}px" class="line"><span class="v">${esc(String(it))}</span></div>`;
+      }
+    });
+  }else if(typeof obj==="object"&&obj!==null){
+    Object.entries(obj).forEach(([k,v])=>{
+      if(typeof v==="object"&&v!==null){
+        parent.innerHTML+=`<div style="padding-left:${depth*14}px;margin-top:6px"><span class="k">${esc(k)}</span>:</div>`;
+        renderJSON(v,parent,depth+1);
+      }else{
+        const cls=v===true?"ok":v===false?"bad":v==="VAR"?"ok":"";
+        parent.innerHTML+=`<div style="padding-left:${depth*14}px" class="line"><span class="k">${esc(k)}</span>: <span class="v ${cls}">${esc(String(v))}</span></div>`;
+      }
+    });
+  }else{
+    parent.innerHTML+=`<div class="v">${esc(String(obj))}</div>`;
+  }
+}
+
+function esc(t){const d=document.createElement("div");d.textContent=t;return d.innerHTML;}
+function closeResult(){document.getElementById("result").classList.add("hide");}
+function copyResult(){if(!lastResult)return;navigator.clipboard.writeText(lastResult);toast("Kopyalandı","success");}
+
+function toast(msg,type="success"){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.className="toast show "+type;
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove("show"),2600);
+}
+
+function tickClock(){
+  const now=new Date();
+  document.getElementById("clock").textContent=now.toLocaleTimeString("tr-TR");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+users.json
+logs.txt
+temp/
+*.zip
+*.html

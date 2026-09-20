@@ -1,0 +1,9 @@
+Flask==3.0.3
+Flask-Limiter==3.5.0
+Flask-WTF==1.2.1
+requests==2.32.3
+dnspython==2.6.1
+python-whois==0.9.4
+beautifulsoup4==4.12.3
+python-dotenv==1.0.1
+waitress==3.0.0
