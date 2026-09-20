@@ -1,0 +1,630 @@
+<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>p1sy</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#08080d;--bg2:#0d0d16;--card:#12121d;--card2:#181826;--border:#232336;--border2:#2e2e45;--text:#eaeaf5;--dim:#6d6d8a;--dim2:#4a4a5e;--purple:#a855f7;--indigo:#6366f1;--pink:#ec4899;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--cyan:#06b6d4;--orange:#f97316}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:-2;background-image:linear-gradient(rgba(168,85,247,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.05) 1px,transparent 1px);background-size:44px 44px}
+body::after{content:'';position:fixed;top:-350px;left:50%;transform:translateX(-50%);width:900px;height:900px;z-index:-1;background:radial-gradient(circle,rgba(168,85,247,.2) 0%,transparent 65%);filter:blur(90px)}
+.header{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;border-bottom:1px solid var(--border);background:rgba(8,8,13,.8);backdrop-filter:blur(24px);position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:16px}
+.logo-rgb{font-size:34px;font-weight:900;letter-spacing:-1.5px;background:linear-gradient(90deg,#ff0080,#ff8c00,#ffd700,#00ff88,#00d4ff,#a855f7,#ff0080);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:rgb 5s linear infinite}
+@keyframes rgb{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+.logo-meta{display:flex;flex-direction:column;gap:3px;padding-left:16px;border-left:1px solid var(--border)}
+.logo-by{font-size:11px;color:var(--dim);font-weight:700;letter-spacing:1.5px}
+.logo-by span{background:linear-gradient(90deg,var(--purple),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
+.user-badge{font-size:11px;font-weight:700;color:var(--purple);padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.logout{background:transparent;border:1px solid var(--border);color:var(--dim);padding:8px 14px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:11px;font-weight:700}
+.logout:hover{color:var(--red);border-color:var(--red)}
+.header-right{display:flex;align-items:center;gap:10px}
+.wrap{display:grid;grid-template-columns:220px 1fr;gap:22px;padding:22px 32px;max-width:1600px;margin:0 auto}
+.sidebar{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;position:sticky;top:100px;height:fit-content;max-height:calc(100vh - 120px);overflow-y:auto}
+.sidebar-label{font-size:10px;font-weight:800;letter-spacing:2.5px;color:var(--dim2);margin-bottom:14px}
+#nav{display:flex;flex-direction:column;gap:3px}
+.nav-btn{background:transparent;border:none;color:var(--text);text-align:left;padding:9px 12px;border-radius:9px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:space-between;transition:all .15s}
+.nav-btn:hover{background:var(--card2)}
+.nav-btn.active{background:linear-gradient(135deg,rgba(168,85,247,.22),rgba(99,102,241,.15));color:#fff}
+.nav-count{font-size:9px;opacity:.6;font-family:'Courier New',monospace;background:var(--bg2);padding:2px 6px;border-radius:5px}
+.content{display:flex;flex-direction:column;gap:18px;min-width:0}
+.search input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:14px 18px;border-radius:12px;font-family:inherit;font-size:14px;outline:none}
+.search input:focus{border-color:var(--purple)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.tool{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px;cursor:pointer;transition:all .2s;animation:ci .3s ease backwards}
+@keyframes ci{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.tool:hover{border-color:var(--purple);transform:translateY(-2px);box-shadow:0 8px 25px rgba(168,85,247,.2)}
+.tool-num{font-family:'Courier New',monospace;font-size:10px;color:var(--purple);font-weight:900}
+.tool-name{font-size:13px;font-weight:700;margin:6px 0 4px;line-height:1.3}
+.tool-cat{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.modal{position:fixed;inset:0;background:rgba(5,5,10,.88);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;z-index:500}
+.modal.hide{display:none}
+.modal-box{background:var(--card);border:1px solid var(--border2);border-radius:18px;width:92%;max-width:520px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--card2),var(--card))}
+.modal-head h3{font-size:15px;font-weight:900;background:linear-gradient(90deg,var(--purple),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.close{background:transparent;border:none;color:var(--dim);font-size:18px;cursor:pointer;width:30px;height:30px;border-radius:8px}
+.close:hover{background:var(--card2);color:var(--red)}
+.modal-body{padding:22px;display:flex;flex-direction:column;gap:14px;max-height:60vh;overflow-y:auto}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase}
+.field input,.field textarea{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:12px 15px;border-radius:10px;font-family:'Courier New',monospace;font-size:13px;outline:none;width:100%}
+.field textarea{resize:vertical;min-height:100px}
+.field input:focus,.field textarea:focus{border-color:var(--purple)}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--bg2)}
+.btn{padding:11px 24px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;border:none}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--dim);border:1px solid var(--border)}
+.result{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:su .3s ease}
+@keyframes su{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.result.hide{display:none}
+.result-head{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.result-title{font-weight:800;font-size:14px}
+.result-actions{display:flex;gap:6px}
+.icon-btn{background:transparent;border:1px solid var(--border);color:var(--dim);width:32px;height:32px;border-radius:9px;cursor:pointer;font-size:13px}
+.icon-btn:hover{color:var(--purple);border-color:var(--purple)}
+.result-body{padding:18px 22px;font-family:'Courier New',monospace;font-size:12px;line-height:1.7;max-height:700px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+.k{color:var(--cyan);font-weight:700}
+.v{color:var(--text)}
+.line{padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.ok{color:var(--green)}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.info{color:var(--cyan)}
+.empty{color:var(--dim);padding:20px;text-align:center}
+.code-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;max-height:400px;overflow:auto;color:var(--cyan);white-space:pre}
+.dl{background:linear-gradient(135deg,var(--green),var(--cyan));color:#fff;padding:9px 16px;border-radius:8px;text-decoration:none;font-weight:800;font-size:11px;display:inline-block;margin-top:8px}
+.profile-box{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin:10px 0;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px}
+.profile-avatar{width:128px;height:128px;border-radius:50%;border:3px solid var(--purple);object-fit:cover;box-shadow:0 8px 30px rgba(168,85,247,.4)}
+.profile-banner{border-radius:12px;border:2px solid var(--purple);overflow:hidden;background:var(--bg2)}
+.profile-banner img{width:100%;max-width:400px;height:auto;display:block;min-height:128px;object-fit:cover}
+.hesap-box{background:linear-gradient(135deg,rgba(168,85,247,.08),rgba(236,72,153,.08));border:1px solid var(--purple);border-radius:12px;padding:16px;margin:12px 0}
+.hesap-title{font-size:12px;font-weight:900;color:var(--purple);letter-spacing:1.5px;margin-bottom:10px;text-transform:uppercase}
+.hesap-row{padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.hesap-key{color:var(--cyan);font-weight:700}
+.hesap-val{color:var(--text);text-align:right}
+.hesap-note{margin-top:10px;padding:8px;background:rgba(234,179,8,.1);border:1px solid var(--yellow);border-radius:8px;font-size:10px;color:var(--yellow);text-align:center}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--card);border:1px solid var(--border2);border-left:3px solid var(--purple);color:var(--text);padding:14px 22px;border-radius:12px;font-size:13px;font-weight:700;transform:translateX(450px);transition:transform .3s;z-index:1000;max-width:340px}
+.toast.show{transform:translateX(0)}
+.toast.success{border-left-color:var(--green)}
+.toast.error{border-left-color:var(--red)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+.foot{text-align:center;padding:22px;font-size:11px;color:var(--dim2);letter-spacing:1.5px;font-weight:700;border-top:1px solid var(--border);margin-top:40px}
+.foot span{background:linear-gradient(90deg,var(--purple),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
+.music-btn{position:fixed;bottom:20px;right:20px;background:var(--purple);color:#fff;border:none;padding:12px 20px;border-radius:10px;font-weight:800;cursor:pointer;font-family:inherit;font-size:12px;z-index:999;box-shadow:0 8px 30px rgba(168,85,247,.5)}
+.music-btn:hover{transform:translateY(-2px)}
+</style></head><body>
+
+<audio id="bgMusic" src="/static/baba.mp3" loop preload="auto"></audio>
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()">🔊 Müziği Çal</button>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-rgb">p1sy</div>
+    <div class="logo-meta">
+      <div class="logo-by">BY <span>grego</span> | <span>p1sy</span></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="user-badge">👤 <span id="me">-</span></div>
+    <button class="logout" id="adminBadge" style="display:none" onclick="setCatAdmin()">🛡 ADMIN</button>
+    <button class="logout" onclick="logout()">ÇIKIŞ</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="sidebar-label">KATEGORİLER</div>
+    <div id="nav"></div>
+  </aside>
+  <main class="content">
+    <div class="search"><input id="search" placeholder="Araç ara..."></div>
+    <div id="grid" class="grid"></div>
+    <div id="result" class="result hide">
+      <div class="result-head">
+        <div class="result-title" id="rTitle">Sonuç</div>
+        <div class="result-actions">
+          <button class="icon-btn" id="copyBtn">📋</button>
+          <button class="icon-btn" id="closeBtn">✕</button>
+        </div>
+      </div>
+      <div class="result-body" id="rBody"></div>
+    </div>
+  </main>
+</div>
+
+<div class="foot">p1sy • BY <span>grego</span> | <span>p1sy</span></div>
+
+<div id="modal" class="modal hide">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="mTitle">Araç</h3><button class="close" onclick="closeM()">✕</button></div>
+    <div class="modal-body" id="mBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeM()">İPTAL</button>
+      <button class="btn btn-primary" id="runBtn">ÇALIŞTIR</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const TOOLS = [
+{n:1,name:"IP Sorgula",cat:"OSINT",api:"/api/ip",in:[{k:"ip",l:"IP Adresi",p:"8.8.8.8"}]},
+{n:2,name:"CIDR Hesapla",cat:"OSINT",api:"/api/cidr",in:[{k:"cidr",l:"CIDR",p:"192.168.1.0/24"}]},
+{n:3,name:"MAC Sorgu",cat:"OSINT",api:"/api/mac",in:[{k:"mac",l:"MAC",p:"00:1A:2B"}]},
+{n:4,name:"Email/Username OSINT",cat:"OSINT",api:"/api/email",in:[{k:"q",l:"Email/Username",p:"ornek@mail.com"}]},
+{n:5,name:"Telefon Numara",cat:"OSINT",api:"/api/phone",in:[{k:"num",l:"Numara",p:"+905551234567"}]},
+{n:6,name:"Username Checker (~60 site)",cat:"OSINT",api:"/api/usercheck",in:[{k:"username",l:"Kullanıcı adı",p:"grego"}]},
+{n:7,name:"MyIP + Konum",cat:"OSINT",api:"/api/myip",in:[]},
+{n:8,name:"DNS Kayıtları",cat:"NET",api:"/api/dns",in:[{k:"domain",l:"Domain",p:"example.com"}]},
+{n:9,name:"Reverse DNS",cat:"NET",api:"/api/rdns",in:[{k:"ip",l:"IP",p:"8.8.8.8"}]},
+{n:10,name:"Traceroute",cat:"NET",api:"/api/trace",in:[{k:"host",l:"Host",p:"google.com"}]},
+{n:11,name:"Port Tarayıcı",cat:"NET",api:"/api/portscan",in:[{k:"host",l:"Host",p:"scanme.nmap.org"},{k:"range",l:"Port Aralığı",p:"80-100"}]},
+{n:12,name:"Banner Grab",cat:"NET",api:"/api/banner",in:[{k:"host",l:"Host",p:"example.com"},{k:"port",l:"Port",p:"22"}]},
+{n:13,name:"SSL Sertifika",cat:"NET",api:"/api/ssl",in:[{k:"host",l:"Host",p:"google.com"}]},
+{n:14,name:"IPv6 Sorgu",cat:"NET",api:"/api/ipv6",in:[{k:"domain",l:"Domain",p:"google.com"}]},
+{n:15,name:"HTTP Header",cat:"WEB",api:"/api/headers",in:[{k:"url",l:"URL",p:"https://example.com"}]},
+{n:16,name:"robots.txt",cat:"WEB",api:"/api/robots",in:[{k:"url",l:"Site",p:"example.com"}]},
+{n:17,name:"sitemap.xml",cat:"WEB",api:"/api/sitemap",in:[{k:"url",l:"Site",p:"example.com"}]},
+{n:18,name:"security.txt",cat:"WEB",api:"/api/sectxt",in:[{k:"url",l:"Site",p:"example.com"}]},
+{n:19,name:"HTTP Methods",cat:"WEB",api:"/api/methods",in:[{k:"url",l:"URL",p:"https://example.com"}]},
+{n:20,name:"Subdomain Enum",cat:"WEB",api:"/api/subdomains",in:[{k:"domain",l:"Domain",p:"example.com"}]},
+{n:21,name:"WAF Tespit",cat:"WEB",api:"/api/waf",in:[{k:"url",l:"URL",p:"https://example.com"}]},
+{n:22,name:"Güvenlik Header",cat:"WEB",api:"/api/headersec",in:[{k:"url",l:"URL",p:"https://example.com"}]},
+{n:23,name:"Cookie Analizi",cat:"WEB",api:"/api/cookie",in:[{k:"url",l:"URL",p:"https://example.com"}]},
+{n:24,name:"Redirect Zinciri",cat:"WEB",api:"/api/redirect",in:[{k:"url",l:"URL",p:"https://example.com"}]},
+{n:25,name:"CVE Arama",cat:"WEB",api:"/api/cve",in:[{k:"q",l:"Arama",p:"apache 2.4"}]},
+{n:26,name:"Site Kopyala (HTML)",cat:"COPY",api:"/api/copy",in:[{k:"url",l:"URL",p:"example.com"}]},
+{n:27,name:"Site Full İndir (ZIP)",cat:"COPY",api:"/api/copyfull",in:[{k:"url",l:"URL",p:"example.com"}]},
+{n:28,name:"Sayfa Metni Çıkar",cat:"COPY",api:"/api/pagetext",in:[{k:"url",l:"URL",p:"https://example.com"}]},
+{n:29,name:"Kaynak Kod Görüntüle",cat:"COPY",api:"/api/viewsrc",in:[{k:"url",l:"URL",p:"https://example.com"}]},
+{n:30,name:"Hash / Base64 / URL",cat:"CRYPTO",api:"/api/hash",in:[{k:"text",l:"Metin",p:"merhaba"}]},
+{n:31,name:"Hash Identifier",cat:"CRYPTO",api:"/api/hashid",in:[{k:"hash",l:"Hash",p:"5d41402abc4b2a76b9719d911017c592"}]},
+{n:32,name:"Şifre Üretici",cat:"CRYPTO",api:"/api/passgen",in:[{k:"length",l:"Uzunluk",p:"20"},{k:"count",l:"Adet",p:"5"}]},
+{n:33,name:"Şifre Gücü Analizi",cat:"CRYPTO",api:"/api/passstrength",in:[{k:"password",l:"Şifre",p:"Merhaba123!"}]},
+{n:34,name:"JWT Decoder",cat:"CRYPTO",api:"/api/jwt",in:[{k:"jwt",l:"JWT",p:"eyJ..."}]},
+{n:35,name:"Hex Enc/Dec",cat:"CRYPTO",api:"/api/hex",in:[{k:"text",l:"Metin",p:"merhaba"}]},
+{n:36,name:"ROT13 / Caesar",cat:"CRYPTO",api:"/api/rot13",in:[{k:"text",l:"Metin",p:"merhaba"},{k:"shift",l:"Shift",p:"13"}]},
+{n:37,name:"Binary Enc/Dec",cat:"CRYPTO",api:"/api/binary",in:[{k:"text",l:"Metin",p:"merhaba"}]},
+{n:38,name:"Base32 Enc/Dec",cat:"CRYPTO",api:"/api/base32",in:[{k:"text",l:"Metin",p:"merhaba"}]},
+{n:39,name:"URL Enc/Dec",cat:"CRYPTO",api:"/api/urlencode",in:[{k:"text",l:"Metin",p:"merhaba dünya"}]},
+{n:40,name:"HTML Entity Enc/Dec",cat:"CRYPTO",api:"/api/htmlentity",in:[{k:"text",l:"Metin",p:"<div>test</div>"}]},
+{n:41,name:"Whois",cat:"RECON",api:"/api/whois",in:[{k:"domain",l:"Domain",p:"example.com"}]},
+{n:42,name:"URL Parser",cat:"RECON",api:"/api/urlparse",in:[{k:"url",l:"URL",p:"https://example.com/path?q=1"}]},
+{n:43,name:"Wayback Machine",cat:"RECON",api:"/api/wayback",in:[{k:"url",l:"URL",p:"example.com"}]},
+{n:44,name:"Discord Username",cat:"RECON",api:"/api/discord",in:[{k:"username",l:"Username",p:"grego"}]},
+{n:45,name:"Discord ID Sorgu",cat:"RECON",api:"/api/discordid",in:[{k:"id",l:"Discord ID (17-19 hane)",p:"1544616638895227004"}]},
+{n:46,name:"GitHub Profil",cat:"RECON",api:"/api/github",in:[{k:"username",l:"Username",p:"torvalds"}]},
+{n:47,name:"Reddit Profil",cat:"RECON",api:"/api/reddit",in:[{k:"username",l:"Username",p:"spez"}]},
+{n:48,name:"DNS Zone Transfer",cat:"RECON",api:"/api/zonetr",in:[{k:"domain",l:"Domain",p:"example.com"}]},
+{n:49,name:"QR Kod Üret",cat:"MISC",api:"/api/qr",in:[{k:"data",l:"İçerik",p:"https://example.com"}]},
+{n:50,name:"Kısa Link Çöz",cat:"MISC",api:"/api/short",in:[{k:"url",l:"Kısa Link",p:"https://bit.ly/xyz"}]},
+{n:51,name:"URL Kısalt",cat:"MISC",api:"/api/urlshort",in:[{k:"url",l:"Uzun URL",p:"https://example.com"}]},
+{n:52,name:"UUID Üretici",cat:"MISC",api:"/api/uuid",in:[{k:"count",l:"Adet",p:"5"}]},
+{n:53,name:"Sistem Bilgisi",cat:"MISC",api:"/api/sysinfo",in:[]},
+{n:54,name:"JSON Formatla",cat:"MISC",api:"/api/jsonfmt",in:[{k:"text",l:"JSON",p:'{"a":1}',ta:1}]},
+{n:55,name:"Metin Diff",cat:"MISC",api:"/api/diff",in:[{k:"a",l:"1. Metin",p:"a\\nb",ta:1},{k:"b",l:"2. Metin",p:"a\\nc",ta:1}]},
+{n:56,name:"Rastgele UA",cat:"MISC",api:"/api/useragent",in:[{k:"count",l:"Adet",p:"10"}]},
+{n:57,name:"Rastgele Email",cat:"MISC",api:"/api/emailgen",in:[{k:"count",l:"Adet",p:"5"}]},
+{n:58,name:"Luhn Kart Kontrol",cat:"MISC",api:"/api/luhn",in:[{k:"number",l:"Kart No",p:"4111111111111111"}]},
+{n:59,name:"IP:Port Ayrıştır",cat:"MISC",api:"/api/ipport",in:[{k:"text",l:"IP:Port",p:"8.8.8.8:53"}]},
+{n:60,name:"Sahte Türk Numara",cat:"MISC",api:"/api/fakenum",in:[{k:"count",l:"Adet",p:"5"},{k:"operator",l:"Operatör (boş=rastgele)",p:"Turkcell"}]},
+{n:61,name:"Sahte Türk IP",cat:"MISC",api:"/api/fakeip",in:[{k:"count",l:"Adet",p:"5"}]},
+{n:62,name:"Sahte Kart Bilgisi",cat:"MISC",api:"/api/fakecard",in:[{k:"count",l:"Adet",p:"3"}]},
+{n:63,name:"Sahte Türk Kimlik",cat:"MISC",api:"/api/faketc",in:[{k:"count",l:"Adet",p:"3"}]},
+{n:64,name:"Lorem Ipsum",cat:"MISC",api:"/api/lorem",in:[{k:"count",l:"Paragraf",p:"3"}]},
+{n:65,name:"Rastgele String",cat:"MISC",api:"/api/randstr",in:[{k:"length",l:"Uzunluk",p:"32"},{k:"count",l:"Adet",p:"5"}]},
+{n:66,name:"Unix Timestamp",cat:"MISC",api:"/api/timestamp",in:[{k:"ts",l:"Unix ts (boş=şimdi)",p:""}]},
+{n:67,name:"MIME Type Sorgu",cat:"MISC",api:"/api/mime",in:[{k:"ext",l:"Uzantı",p:"pdf"}]},
+{n:68,name:"HTTP Status Kodları",cat:"MISC",api:"/api/httpstatus",in:[{k:"code",l:"Kod (boş=tümü)",p:"404"}]},
+{n:69,name:"Chmod Hesapla",cat:"MISC",api:"/api/chmod",in:[{k:"perm",l:"İzin",p:"755"}]},
+{n:70,name:"Port Info",cat:"MISC",api:"/api/portinfo",in:[{k:"port",l:"Port",p:"80"}]},
+{n:71,name:"Base58 Enc/Dec",cat:"MISC",api:"/api/base58",in:[{k:"text",l:"Metin",p:"merhaba"}]},
+{n:72,name:"Octal Enc/Dec",cat:"MISC",api:"/api/octal",in:[{k:"text",l:"Metin",p:"merhaba"}]},
+{n:73,name:"Decimal Enc/Dec",cat:"MISC",api:"/api/decimal",in:[{k:"text",l:"Metin",p:"merhaba"}]},
+{n:74,name:"Reverse Text",cat:"MISC",api:"/api/reverse",in:[{k:"text",l:"Metin",p:"merhaba"}]},
+{n:75,name:"Case Converter",cat:"MISC",api:"/api/case",in:[{k:"text",l:"Metin",p:"Merhaba Dünya"}]},
+{n:76,name:"Word Count",cat:"MISC",api:"/api/wordcount",in:[{k:"text",l:"Metin",p:"merhaba dünya",ta:1}]},
+{n:77,name:"Remove Duplicates",cat:"MISC",api:"/api/uniq",in:[{k:"text",l:"Satırlar",p:"a\\nb\\na\\nc",ta:1}]},
+{n:78,name:"Sort Lines",cat:"MISC",api:"/api/sortlines",in:[{k:"text",l:"Satırlar",p:"c\\na\\nb",ta:1}]},
+
+{n:79,name:"Vowels",cat:"MISC",api:"/api/extra/vowels",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:80,name:"Consonants",cat:"CRYPTO",api:"/api/extra/consonants",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:81,name:"Digitsum",cat:"OSINT",api:"/api/extra/digitsum",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:82,name:"Asciisum",cat:"MISC",api:"/api/extra/asciisum",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:83,name:"Unique Words",cat:"CRYPTO",api:"/api/extra/unique_words",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:84,name:"Avgword",cat:"OSINT",api:"/api/extra/avgword",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:85,name:"Longword",cat:"MISC",api:"/api/extra/longword",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:86,name:"Shortword",cat:"CRYPTO",api:"/api/extra/shortword",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:87,name:"Reverse Lines",cat:"OSINT",api:"/api/extra/reverse_lines",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:88,name:"Reverse Each Line",cat:"MISC",api:"/api/extra/reverse_each_line",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:89,name:"Dedupe Words",cat:"CRYPTO",api:"/api/extra/dedupe_words",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:90,name:"Sort Words",cat:"OSINT",api:"/api/extra/sort_words",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:91,name:"Sort Words Rev",cat:"MISC",api:"/api/extra/sort_words_rev",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:92,name:"Lower Lines",cat:"CRYPTO",api:"/api/extra/lower_lines",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:93,name:"Upper Lines",cat:"OSINT",api:"/api/extra/upper_lines",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:94,name:"Title Lines",cat:"MISC",api:"/api/extra/title_lines",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:95,name:"Trim Lines",cat:"CRYPTO",api:"/api/extra/trim_lines",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:96,name:"Remove Vowels",cat:"OSINT",api:"/api/extra/remove_vowels",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:97,name:"Remove Digits",cat:"MISC",api:"/api/extra/remove_digits",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:98,name:"Remove Letters",cat:"CRYPTO",api:"/api/extra/remove_letters",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:99,name:"Remove Punct",cat:"OSINT",api:"/api/extra/remove_punct",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:100,name:"Only Ascii",cat:"MISC",api:"/api/extra/only_ascii",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:101,name:"Ascii Codes Hex",cat:"CRYPTO",api:"/api/extra/ascii_codes_hex",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:102,name:"Unicode Names",cat:"OSINT",api:"/api/extra/unicode_names",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:103,name:"Unicode Escape",cat:"MISC",api:"/api/extra/unicode_escape",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:104,name:"Json String",cat:"CRYPTO",api:"/api/extra/json_string",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:105,name:"Json Unstring",cat:"OSINT",api:"/api/extra/json_unstring",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:106,name:"B64Urlenc",cat:"MISC",api:"/api/extra/b64urlenc",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:107,name:"B64Urldec",cat:"CRYPTO",api:"/api/extra/b64urldec",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:108,name:"B85Enc",cat:"OSINT",api:"/api/extra/b85enc",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:109,name:"B85Dec",cat:"MISC",api:"/api/extra/b85dec",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:110,name:"A85Enc",cat:"CRYPTO",api:"/api/extra/a85enc",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:111,name:"A85Dec",cat:"OSINT",api:"/api/extra/a85dec",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:112,name:"Hexdec",cat:"MISC",api:"/api/extra/hexdec",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:113,name:"Bindec",cat:"CRYPTO",api:"/api/extra/bindec",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:114,name:"Octenc",cat:"OSINT",api:"/api/extra/octenc",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:115,name:"Octdec",cat:"MISC",api:"/api/extra/octdec",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:116,name:"Decimalenc",cat:"CRYPTO",api:"/api/extra/decimalenc",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:117,name:"Decimaldec",cat:"OSINT",api:"/api/extra/decimaldec",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:118,name:"Sha224",cat:"MISC",api:"/api/extra/sha224",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:119,name:"Sha384",cat:"CRYPTO",api:"/api/extra/sha384",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:120,name:"Sha3 256",cat:"OSINT",api:"/api/extra/sha3_256",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:121,name:"Sha3 512",cat:"MISC",api:"/api/extra/sha3_512",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:122,name:"Blake2B",cat:"CRYPTO",api:"/api/extra/blake2b",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:123,name:"Blake2S",cat:"OSINT",api:"/api/extra/blake2s",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:124,name:"Token32",cat:"MISC",api:"/api/extra/token32",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:125,name:"Token64",cat:"CRYPTO",api:"/api/extra/token64",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:126,name:"Url Safe Token",cat:"OSINT",api:"/api/extra/url_safe_token",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:127,name:"Uuid Hex",cat:"MISC",api:"/api/extra/uuid_hex",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:128,name:"Uuid Int",cat:"CRYPTO",api:"/api/extra/uuid_int",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:129,name:"Timestamp Ms",cat:"OSINT",api:"/api/extra/timestamp_ms",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:130,name:"Utc Iso",cat:"MISC",api:"/api/extra/utc_iso",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:131,name:"Utc Date",cat:"CRYPTO",api:"/api/extra/utc_date",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:132,name:"Utc Time",cat:"OSINT",api:"/api/extra/utc_time",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:133,name:"Weekday",cat:"MISC",api:"/api/extra/weekday",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:134,name:"Week",cat:"CRYPTO",api:"/api/extra/week",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:135,name:"Year",cat:"OSINT",api:"/api/extra/year",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:136,name:"Month",cat:"MISC",api:"/api/extra/month",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:137,name:"Day",cat:"CRYPTO",api:"/api/extra/day",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:138,name:"Hour",cat:"OSINT",api:"/api/extra/hour",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:139,name:"Minute",cat:"MISC",api:"/api/extra/minute",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:140,name:"Second",cat:"CRYPTO",api:"/api/extra/second",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:141,name:"Ip Valid",cat:"OSINT",api:"/api/extra/ip_valid",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:142,name:"Ipv4 Private",cat:"MISC",api:"/api/extra/ipv4_private",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:143,name:"Ipv4 Public",cat:"CRYPTO",api:"/api/extra/ipv4_public",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:144,name:"Ipv6 Private",cat:"OSINT",api:"/api/extra/ipv6_private",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:145,name:"Loopback",cat:"MISC",api:"/api/extra/loopback",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:146,name:"Multicast",cat:"CRYPTO",api:"/api/extra/multicast",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:147,name:"Port Valid",cat:"OSINT",api:"/api/extra/port_valid",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:148,name:"Discord Id Valid",cat:"MISC",api:"/api/extra/discord_id_valid",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:149,name:"Discord Created",cat:"CRYPTO",api:"/api/extra/discord_created",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:150,name:"Discord Default Avatar",cat:"OSINT",api:"/api/extra/discord_default_avatar",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:151,name:"Email Valid",cat:"MISC",api:"/api/extra/email_valid",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:152,name:"Url Valid",cat:"CRYPTO",api:"/api/extra/url_valid",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:153,name:"Domain Extract",cat:"OSINT",api:"/api/extra/domain_extract",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:154,name:"Query Params",cat:"MISC",api:"/api/extra/query_params",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:155,name:"Fragment Extract",cat:"CRYPTO",api:"/api/extra/fragment_extract",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:156,name:"Path Extract",cat:"OSINT",api:"/api/extra/path_extract",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:157,name:"Scheme Extract",cat:"MISC",api:"/api/extra/scheme_extract",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:158,name:"Hostname Valid",cat:"CRYPTO",api:"/api/extra/hostname_valid",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:159,name:"Slug Strict",cat:"OSINT",api:"/api/extra/slug_strict",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:160,name:"Snake Strict",cat:"MISC",api:"/api/extra/snake_strict",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:161,name:"Kebab Strict",cat:"CRYPTO",api:"/api/extra/kebab_strict",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:162,name:"Dot Strict",cat:"OSINT",api:"/api/extra/dot_strict",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:163,name:"Collapse Newlines",cat:"MISC",api:"/api/extra/collapse_newlines",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:164,name:"Collapse Spaces",cat:"CRYPTO",api:"/api/extra/collapse_spaces",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:165,name:"Remove Blank Lines",cat:"OSINT",api:"/api/extra/remove_blank_lines",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:166,name:"Pad Left",cat:"MISC",api:"/api/extra/pad_left",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:167,name:"Pad Right",cat:"CRYPTO",api:"/api/extra/pad_right",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:168,name:"Center20",cat:"OSINT",api:"/api/extra/center20",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:169,name:"Zfill20",cat:"MISC",api:"/api/extra/zfill20",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:170,name:"Repeat5",cat:"CRYPTO",api:"/api/extra/repeat5",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:171,name:"Repeat10",cat:"OSINT",api:"/api/extra/repeat10",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:172,name:"Char Frequency",cat:"MISC",api:"/api/extra/char_frequency",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:173,name:"Word Frequency",cat:"CRYPTO",api:"/api/extra/word_frequency",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:174,name:"Number List",cat:"OSINT",api:"/api/extra/number_list",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:175,name:"Number Sum",cat:"MISC",api:"/api/extra/number_sum",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:176,name:"Number Median",cat:"CRYPTO",api:"/api/extra/number_median",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:177,name:"Number Stdev",cat:"OSINT",api:"/api/extra/number_stdev",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:178,name:"Number Variance",cat:"MISC",api:"/api/extra/number_variance",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:179,name:"Number Range",cat:"CRYPTO",api:"/api/extra/number_range",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:180,name:"Is Even",cat:"OSINT",api:"/api/extra/is_even",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:181,name:"Is Odd",cat:"MISC",api:"/api/extra/is_odd",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:182,name:"Is Prime",cat:"CRYPTO",api:"/api/extra/is_prime",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:183,name:"Factorial",cat:"OSINT",api:"/api/extra/factorial",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:184,name:"Gcd Pair",cat:"MISC",api:"/api/extra/gcd_pair",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:185,name:"Lcm Pair",cat:"CRYPTO",api:"/api/extra/lcm_pair",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:186,name:"Percent Of",cat:"OSINT",api:"/api/extra/percent_of",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:187,name:"Regex Escape2",cat:"MISC",api:"/api/extra/regex_escape2",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:188,name:"Strip Tags2",cat:"CRYPTO",api:"/api/extra/strip_tags2",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:189,name:"Html Escape2",cat:"OSINT",api:"/api/extra/html_escape2",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:190,name:"Html Unescape2",cat:"MISC",api:"/api/extra/html_unescape2",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:191,name:"Nfkd",cat:"CRYPTO",api:"/api/extra/nfkd",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:192,name:"Nfc",cat:"OSINT",api:"/api/extra/nfc",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:193,name:"Casefold",cat:"MISC",api:"/api/extra/casefold",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:194,name:"Capitalize",cat:"CRYPTO",api:"/api/extra/capitalize",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:195,name:"Swapcase2",cat:"OSINT",api:"/api/extra/swapcase2",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:196,name:"Reverse Words",cat:"MISC",api:"/api/extra/reverse_words",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:197,name:"First Line",cat:"CRYPTO",api:"/api/extra/first_line",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:198,name:"Last Line",cat:"OSINT",api:"/api/extra/last_line",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:199,name:"Linecount Nonempty",cat:"MISC",api:"/api/extra/linecount_nonempty",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:200,name:"Byte Count Utf8",cat:"CRYPTO",api:"/api/extra/byte_count_utf8",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:201,name:"Byte Count Ascii",cat:"OSINT",api:"/api/extra/byte_count_ascii",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:202,name:"Entropy",cat:"MISC",api:"/api/extra/entropy",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:203,name:"Palindrome Clean",cat:"CRYPTO",api:"/api/extra/palindrome_clean",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:204,name:"Anagram Signature",cat:"OSINT",api:"/api/extra/anagram_signature",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:205,name:"Random Hex16",cat:"MISC",api:"/api/extra/random_hex16",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:206,name:"Random Hex32",cat:"CRYPTO",api:"/api/extra/random_hex32",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:207,name:"Random Url Token",cat:"OSINT",api:"/api/extra/random_url_token",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:208,name:"Random Uuid",cat:"MISC",api:"/api/extra/random_uuid",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:209,name:"Random Uuid Hex",cat:"CRYPTO",api:"/api/extra/random_uuid_hex",in:[{k:"text",l:"Girdi",p:"Örnek metin 123"}]},
+{n:210,name:"Random Bytes16",cat:"OSINT",api:"/api/extra/random_bytes16",in:[{k:"text",l:"Girdi",p:"Örnek metin"}]},
+{n:211,name:"Kullanıcıları Listele",cat:"ADMIN",api:"/api/admin/users",in:[]},
+{n:212,name:"Site Rolü Ver / Al",cat:"ADMIN",api:"/api/admin/role",in:[{k:"username",l:"Kullanıcı",p:"kullaniciadi"},{k:"role",l:"Rol (vip/founder)",p:"vip"},{k:"action",l:"İşlem (grant/revoke)",p:"grant"}]},
+{n:213,name:"Güvenli Logları Gör",cat:"ADMIN",api:"/api/admin/logs",in:[{k:"limit",l:"Satır",p:"100"}]},
+];
+
+const CATS={ALL:{n:"Tümü",i:"◈"},OSINT:{n:"OSINT",i:"◉"},NET:{n:"Ağ",i:"◐"},WEB:{n:"Web",i:"◑"},COPY:{n:"Kopya",i:"◒"},CRYPTO:{n:"Kripto",i:"◆"},RECON:{n:"Recon",i:"◇"},MISC:{n:"Araçlar",i:"○"},ADMIN:{n:"Yönetim",i:"🛡"}};
+
+let curCat="ALL", lastResult=null, activeTool=null;
+
+document.addEventListener("DOMContentLoaded",()=>{
+  buildNav(); renderTools(); loadMe();
+  document.getElementById("search").addEventListener("input",e=>renderTools(e.target.value));
+  document.getElementById("copyBtn").onclick=copyRes;
+  document.getElementById("closeBtn").onclick=()=>document.getElementById("result").classList.add("hide");
+  document.getElementById("runBtn").onclick=runTool;
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeM();});
+  document.addEventListener("click",function once(){
+    const m=document.getElementById("bgMusic");
+    if(m && m.paused){
+      m.play().then(()=>{document.getElementById("musicBtn").textContent="⏸ Müziği Durdur";}).catch(()=>{});
+    }
+    document.removeEventListener("click",once);
+  });
+});
+
+function toggleMusic(){
+  const m=document.getElementById("bgMusic");
+  const b=document.getElementById("musicBtn");
+  if(m.paused){m.play().then(()=>{b.textContent="⏸ Müziği Durdur";}).catch(e=>console.log("müzik:",e));}
+  else{m.pause();b.textContent="🔊 Müziği Çal";}
+}
+
+let isAdmin=false;
+async function loadMe(){
+  try{
+    const r=await fetch("/api/whoami"); const d=await r.json();
+    if(d.status==="ok"){
+      document.getElementById("me").textContent=d.data.username+" • "+d.data.role;
+      isAdmin=!!d.data.is_admin;
+      document.getElementById("adminBadge").style.display=isAdmin?"inline-block":"none";
+      buildNav(); renderTools(document.getElementById("search").value);
+    }
+  }catch(e){}
+}
+function visibleTools(){return isAdmin?TOOLS:TOOLS.filter(t=>t.cat!=="ADMIN");}
+function setCatAdmin(){curCat="ADMIN";buildNav();renderTools();}
+
+async function logout(){await fetch("/api/logout",{method:"POST"});location.href="/";}
+
+function buildNav(){
+  const nav=document.getElementById("nav"); nav.innerHTML="";
+  const vt=visibleTools();
+  Object.entries(CATS).forEach(([k,c])=>{
+    if(k==="ADMIN" && !isAdmin) return;
+    const cnt=k==="ALL"?vt.length:vt.filter(t=>t.cat===k).length;
+    const b=document.createElement("button");
+    b.className="nav-btn"+(k===curCat?" active":"");
+    b.innerHTML=`<span>${c.i} ${c.n}</span><span class="nav-count">${cnt}</span>`;
+    b.onclick=()=>{curCat=k;buildNav();renderTools();};
+    nav.appendChild(b);
+  });
+}
+
+function renderTools(f=""){
+  const grid=document.getElementById("grid"); grid.innerHTML="";
+  let list=visibleTools();
+  if(curCat!=="ALL") list=list.filter(t=>t.cat===curCat);
+  if(f){const q=f.toLowerCase();list=list.filter(t=>t.name.toLowerCase().includes(q)||t.cat.toLowerCase().includes(q));}
+  if(!list.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">Bulunamadı</div>';return;}
+  list.forEach((t,i)=>{
+    const c=document.createElement("div"); c.className="tool"; c.style.animationDelay=(i*0.02)+"s";
+    const num=document.createElement("div"); num.className="tool-num"; num.textContent="["+String(t.n).padStart(2,"0")+"]";
+    const nm=document.createElement("div"); nm.className="tool-name"; nm.textContent=t.name;
+    const ct=document.createElement("div"); ct.className="tool-cat"; ct.textContent=CATS[t.cat]?.n||t.cat;
+    c.appendChild(num); c.appendChild(nm); c.appendChild(ct);
+    c.onclick=()=>openTool(t);
+    grid.appendChild(c);
+  });
+}
+
+function openTool(t){
+  activeTool=t;
+  document.getElementById("mTitle").textContent="["+t.n+"] "+t.name;
+  const b=document.getElementById("mBody"); b.innerHTML="";
+  if(!t.in.length){const d=document.createElement("div");d.style.color="var(--dim)";d.style.textAlign="center";d.textContent="Giriş gerekmez";b.appendChild(d);}
+  else{
+    t.in.forEach(inp=>{
+      const f=document.createElement("div"); f.className="field";
+      const lb=document.createElement("label"); lb.textContent=inp.l;
+      const tag=inp.ta?"textarea":"input";
+      const el=document.createElement(tag); el.id="in_"+inp.k; el.placeholder=inp.p||"";
+      f.appendChild(lb); f.appendChild(el); b.appendChild(f);
+    });
+  }
+  document.getElementById("modal").classList.remove("hide");
+}
+function closeM(){document.getElementById("modal").classList.add("hide");activeTool=null;}
+
+async function runTool(){
+  if(!activeTool) return;
+  const payload={};
+  activeTool.in.forEach(i=>{const el=document.getElementById("in_"+i.k);payload[i.k]=el?el.value:"";});
+  const btn=document.getElementById("runBtn"); btn.disabled=true; btn.innerHTML='<span class="spin"></span> ...';
+  const tool={...activeTool}; closeM();
+  try{
+    const r=await fetch(tool.api,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    if(r.status===401){location.href="/";return;}
+    const d=await r.json();
+    showRes(tool.name,d);
+    if(d.status==="ok") toast("Başarılı","success"); else toast(d.message||"Hata","error");
+  }catch(e){showRes(tool.name,{status:"error",message:"Bağlantı: "+e.message});toast("Hata","error");}
+  finally{btn.disabled=false;btn.textContent="ÇALIŞTIR";}
+}
+
+function showRes(title,data){
+  lastResult=JSON.stringify(data,null,2);
+  document.getElementById("rTitle").textContent=title;
+  const b=document.getElementById("rBody"); b.innerHTML="";
+  if(data.status==="error"){
+    const d=document.createElement("div"); d.className="bad"; d.textContent="X "+data.message; b.appendChild(d);
+  }else renderJSON(data.data,b,0);
+  const p=document.getElementById("result"); p.classList.remove("hide");
+  p.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderProfileBox(obj,parent){
+  const box=document.createElement("div");
+  box.className="profile-box";
+
+  if(obj._avatar){
+    const wrap=document.createElement("div");
+    wrap.style.textAlign="center";
+    wrap.style.minWidth="140px";
+
+    const av=document.createElement("img");
+    av.className="profile-avatar";
+    av.src=String(obj._avatar);
+    av.alt="avatar";
+    av.onerror=function(){this.style.display="none";};
+    wrap.appendChild(av);
+
+    const dlBtn=document.createElement("a");
+    dlBtn.href=String(obj._avatar);
+    dlBtn.download="avatar_"+(obj.id||"user")+".png";
+    dlBtn.target="_blank";
+    dlBtn.textContent="⬇ Avatar İndir";
+    dlBtn.className="dl";
+    dlBtn.style.display="block";
+    dlBtn.style.marginTop="8px";
+    dlBtn.style.fontSize="10px";
+    wrap.appendChild(dlBtn);
+
+    box.appendChild(wrap);
+  }
+
+  if(obj._banner){
+    const wrap=document.createElement("div");
+    wrap.style.flex="1";
+    wrap.style.minWidth="200px";
+
+    const bn=document.createElement("div");
+    bn.className="profile-banner";
+
+    const img=document.createElement("img");
+    img.src=String(obj._banner);
+    img.alt="banner";
+    img.onerror=function(){this.parentElement.style.display="none";};
+    bn.appendChild(img);
+    wrap.appendChild(bn);
+
+    const dlBtn=document.createElement("a");
+    dlBtn.href=String(obj._banner);
+    dlBtn.download="banner_"+(obj.id||"user")+".png";
+    dlBtn.target="_blank";
+    dlBtn.textContent="⬇ Banner İndir";
+    dlBtn.className="dl";
+    dlBtn.style.display="inline-block";
+    dlBtn.style.marginTop="8px";
+    dlBtn.style.fontSize="10px";
+    wrap.appendChild(dlBtn);
+
+    box.appendChild(wrap);
+  }
+
+  if(box.children.length) parent.appendChild(box);
+}
+
+function renderHesapBox(obj,parent){
+  if(!obj["Hesap Bilgileri"]) return;
+  const hb=obj["Hesap Bilgileri"];
+  const box=document.createElement("div");
+  box.className="hesap-box";
+  const title=document.createElement("div");
+  title.className="hesap-title";
+  title.textContent="👤 Hesap Bilgileri";
+  box.appendChild(title);
+
+  Object.entries(hb).forEach(([k,v])=>{
+    if(k==="Not") return;
+    const row=document.createElement("div");
+    row.className="hesap-row";
+    const kk=document.createElement("span");
+    kk.className="hesap-key";
+    kk.textContent=k;
+    const vv=document.createElement("span");
+    vv.className="hesap-val";
+    vv.textContent=String(v);
+    row.appendChild(kk); row.appendChild(vv);
+    box.appendChild(row);
+  });
+
+  if(hb["Not"]){
+    const note=document.createElement("div");
+    note.className="hesap-note";
+    note.textContent=hb["Not"];
+    box.appendChild(note);
+  }
+
+  parent.appendChild(box);
+}
+
+function renderJSON(obj,parent,depth){
+  if(depth>6){const d=document.createElement("div");d.style.color="var(--dim)";d.textContent="...";parent.appendChild(d);return;}
+  if(obj===null||obj===undefined){const d=document.createElement("div");d.className="v";d.textContent="-";parent.appendChild(d);return;}
+  if(Array.isArray(obj)){
+    if(!obj.length){const d=document.createElement("div");d.className="empty";d.textContent="(boş)";parent.appendChild(d);return;}
+    obj.forEach((it,i)=>{
+      const pad=document.createElement("div");pad.style.paddingLeft=(depth*14)+"px";
+      if(typeof it==="object"&&it!==null){
+        const h=document.createElement("div");h.className="info";h.textContent="["+i+"]";pad.appendChild(h);parent.appendChild(pad);
+        renderJSON(it,parent,depth+1);
+      }else{
+        const l=document.createElement("div");l.className="line";const s=document.createElement("span");s.className="v";s.textContent=String(it);l.appendChild(s);pad.appendChild(l);parent.appendChild(pad);
+      }
+    });
+  }else if(typeof obj==="object"){
+    if(obj._avatar || obj._banner) renderProfileBox(obj,parent);
+    if(obj["Hesap Bilgileri"]) renderHesapBox(obj,parent);
+
+    Object.entries(obj).forEach(([k,v])=>{
+      if(k==="_avatar"||k==="_banner"||k==="Hesap Bilgileri") return;
+      const pad=document.createElement("div");pad.style.paddingLeft=(depth*14)+"px";
+      if(typeof v==="object"&&v!==null){
+        const kk=document.createElement("span");kk.className="k";kk.textContent=k;pad.appendChild(kk);pad.appendChild(document.createTextNode(":"));
+        parent.appendChild(pad); renderJSON(v,parent,depth+1);
+      }else{
+        const l=document.createElement("div");l.className="line";
+        const kk=document.createElement("span");kk.className="k";kk.textContent=k;l.appendChild(kk);
+        l.appendChild(document.createTextNode(": "));
+        if(k==="_code"){const cb=document.createElement("div");cb.className="code-box";cb.textContent=String(v);l.appendChild(cb);}
+        else if(k==="profil_url"||k==="profil"){const a=document.createElement("a");a.className="dl";a.href=String(v);a.target="_blank";a.rel="noopener noreferrer";a.textContent="👤 DISCORD PROFİLİNİ AÇ";l.appendChild(a);}
+        else if(k==="_download"){const a=document.createElement("a");a.className="dl";a.href=String(v);a.textContent="⬇ İNDİR";a.setAttribute("download","");l.appendChild(a);}
+        else{
+          const vv=document.createElement("span"); vv.className="v";
+          if(v===true)vv.classList.add("ok");
+          if(v===false)vv.classList.add("bad");
+          vv.textContent=String(v); l.appendChild(vv);
+        }
+        pad.appendChild(l);parent.appendChild(pad);
+      }
+    });
+  }else{
+    const d=document.createElement("div");d.className="v";d.textContent=String(obj);parent.appendChild(d);
+  }
+}
+
+function copyRes(){if(!lastResult)return;navigator.clipboard.writeText(lastResult);toast("Kopyalandı","success");}
+function toast(m,t="success"){const el=document.getElementById("toast");el.textContent=m;el.className="toast show "+t;clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2500);}
+</script></body></html>
